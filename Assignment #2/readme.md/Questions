@@ -1,1 +1,536 @@
+#include <iostream>
+#include <list>
+using namespace std;
+
+class Character; // Forward declaration
+
+class Weapon {
+    list<string> weapons;
+
+public:
+    Weapon() {
+        weapons.push_back("TEMPUS");
+        weapons.push_back("XRK Stalker");
+        weapons.push_back("Purifier");
+        weapons.push_back("GLITCH");
+        weapons.push_back("mp7");
+    }
+
+    string Use() {
+        int i;
+        string input;
+        bool flag;
+        cout << "Available Weapons: " << endl;
+        for (const auto &weaponlist : weapons) {
+            cout << weaponlist << endl;
+        }
+
+    repeat:
+        cout << "\n------------------------------------" << endl;
+        cout << "CHOOSE YOUR WEOPEN!! ";
+        cin >> input;
+        cout << "------------------------------------" << endl;
+        for (const auto &weaponlist : weapons) {
+            if (input != weaponlist) {
+                flag = false;
+            } else {
+                flag = true;
+                break;
+            }
+        }
+        if (flag == false) {
+            cout << "Invalid Input." << endl;
+            goto repeat;
+        } else {
+            return input;
+        }
+    }
+};
+
+class Player {
+protected:
+    int PlayerID;
+    string PlayerName;
+    int Health;
+
+public:
+    Player(int id, string name) : PlayerID(id), PlayerName(name) {
+        Health = 100;
+    }
+    int GetHealth() const {
+        return Health;
+    }
+    void SetHealth(int dmg) {
+        Health = Health - dmg;
+    }
+};
+
+class Enemy : public Player {
+    int Damage;
+
+public:
+    Enemy(int dmg, int id, string name) : Player(id, name) {
+        if (dmg > 0 && dmg < 11) {
+            Damage = dmg;
+        }
+    }
+    void Attack(Player &player) {
+        cout << "\n************" << endl;
+        cout << "YOU ARE CURRENTLY UNDER HEAVY FIRE" << endl;
+        cout << "************" << endl;
+    }
+    void HealthDecrement() {
+        Health = Health - 5;
+    }
+    void DisplayHealth() {
+        cout << "Opponents Health is: " << GetHealth() << endl;
+    }
+    int GetDamage() const {
+        return Damage;
+    }
+};
+
+class Character : public Player {
+    int Level;
+    string Experience;
+    int Points;
+
+public:
+    Weapon weapon;
+
+    Character(int id, string name) : Player(id, name) {
+        Level = 0;
+        Points = 0;
+        Experience = "Beginner";
+    }
+    void LevelUp() {
+        if (Points % 10 == 0) {
+            Level++;
+            if (Experience == "Beginner") {
+                Experience = "Intermediate";
+            } else if (Experience == "Intermediate") {
+                Experience = "Advanced";
+            } else if (Experience == "Advanced") {
+                Experience = "Expert";
+            }
+        }
+    }
+    void DisplayExperienceLevel() const {
+        cout << "Current Player Experience is: " << Experience << endl;
+        cout << "Player Level is: " << Level << endl;
+    }
+    void Attack(Enemy &enemy) {
+        cout << "\n************" << endl;
+        string input = weapon.Use();
+        enemy.HealthDecrement();
+        Points += 10;
+        cout << "\n************" << endl;
+        cout << "OPPONENT IS BEING ATTACKED CURRENTLY" << endl;
+        cout << "************" << endl;
+        enemy.DisplayHealth();
+        cout << "------------------------------------" << endl;
+        LevelUp();
+        DisplayExperienceLevel();
+        cout << "------------------------------------" << endl;
+    }
+    void DisplayHealth() {
+        cout << "Health Status: " << GetHealth() << endl;
+    }
+    void PlayGame(Enemy &enemy) {
+        int damage;
+        string choice;
+        cout << "***********" << endl;
+        cout << "Choose who wants to strike first"<<endl<<"YOU OR THE OPPONENT"<< endl;
+        cin >> choice;
+        cout << "***********" << endl;
+        if (choice == "enemy" || choice == "Enemy") {
+            string input = weapon.Use();
+            enemy.Attack(*this);
+            damage = enemy.GetDamage();
+            SetHealth(damage);
+            DisplayHealth();
+        } else if (choice == "Player" || choice == "player") {
+            Attack(enemy);
+        }
+    }
+};
+
+int main() {
+	cout<<"**XXXXXXXXXXXXXXXXXXX**"<<endl;
+	cout<<"Murtaza 23k-0076"<<endl;
+	cout<<"**XXXXXXXXXXXXXXXXXXX**"<<endl;
+	
+    Enemy enemy(10, 1, "MARIO");
+    Character character(2, "HITLER");
+
+    do{
+		character.PlayGame(enemy); 
+        if (enemy.GetHealth() <= 0) {
+            cout << "Mission successful, YOU HAVE WON" << endl;
+            break;
+        }
+        // enemy.Attack(); 
+        if (character.GetHealth() <= 0) {
+            cout << "MISSION FAILED, YOU HAVE DIED" << endl;
+            break;
+        }
+	} while(character.GetHealth() > 0 && enemy.GetHealth() > 0);
+
+    return 0;
+}
+
+Q2
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class SecurityTool {
+protected:
+    string securityLevel;
+    double cost;
+    int devices;
+
+public:
+    SecurityTool(string level, double rate, int dev) : securityLevel(level), cost(rate), devices(dev) {
+        if (securityLevel != "High" && securityLevel != "Low" && securityLevel != "Medium") {
+            cout << "Enter valid level..." << endl;
+            exit(1);
+        }
+
+        if (cost <= 0) {
+            cout << "The cost can not be set that  low" << endl;
+            exit(1);
+        }
+    }
+
+    virtual void performScan() {
+        cout << "Performing a security scan" << endl;
+    }
+};
+
+class FirewallTool : public SecurityTool {
+    vector<int> ports;
+    int roll;
+    vector<string> protocols;
+
+public:
+    FirewallTool(vector<int> port, int r = 6, vector<string> pro = {})
+        : SecurityTool("High", 50, 10), roll(r), ports(port), protocols(pro) {
+        for (int i = r; i < r + 23; i++) {
+            ports.push_back(port[i]);
+        }
+    }
+
+    void performScan() override {
+        cout << "Performing a security scan..." << endl;
+
+        if (securityLevel == "High") {
+            cout << "High security level: Allowing traffic from port list and protocol list only." << endl;
+        } else if (securityLevel == "Medium") {
+            cout << "Medium security level: Allowing traffic from port list, protocol list, and the next two ports in sequence." << endl;
+        } else if (securityLevel == "Low") {
+            cout << "Low security level: Allowing traffic from port list, protocol list, the next 5 ports in sequence, and from TCP and DNS protocol." << endl;
+        } else {
+            cout << "Invalid security level." << endl;
+        }
+    }
+};
+
+int main() {
+    vector<int> portList = {80, 443, 21, 22, 25, 53, 161, 162, 20, 23, 69, 123, 137, 138, 139, 161, 162, 69, 161, 162, 514, 22, 23};
+    vector<string> protocolList = {"HTTPS", "FTP", "UDP", "ICMP", "SSH", "SNMP"};
+    FirewallTool firewall(portList, 6, protocolList);
+    firewall.displayPortList();
+    firewall.performScan();
+
+    return 0;
+}
+
+q3
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class DarazPersonData {
+private:
+    string lastName;
+    string firstName;
+    string address;
+    string city;
+    string state;
+    string zip;
+    string phone;
+
+public:
+    string getLastName()
+	  { 
+	  return lastName;
+	   }
+    string getFirstName()  {
+	 return firstName; 
+	 }
+    string getAddress()  { 
+	return address;
+	 }
+    string getCity()  {
+	 return city;
+	  }
+    string getState()  {
+	 return state; 
+	 }
+    string getZip()  {
+	 return zip; 
+	 }
+    string getPhone()  { 
+	return phone; 
+	}
+
+    void setLastName( string ln) { 
+	lastName = ln;
+	 }
+    void setFirstName( string fn) { 
+	firstName = fn;
+	 }
+    void setAddress( string addr) {
+	 address = addr;
+	  }
+    void setCity( string cty) { 
+	city = cty;
+	 }
+    void setState( string st) {
+	 state = st; 
+	 }
+    void setZip( string zp) {
+	 zip = zp;
+	  }
+    void setPhone( string ph) {
+	 phone = ph;
+	  }
+	  
+};
+class DarazCustomerData {
+protected:
+    int customerNumber;
+    int loyaltyPoints;
+public:
+
+    DarazCustomerData(int custNum, int loyaltyPts)
+	{
+		customerNumber=custNum;
+		loyaltyPoints=loyaltyPts;
+}
+
+    int getCustomerNumber()  { 
+	return customerNumber;
+	 }
+    int getLoyaltyPoints()  {
+	 return loyaltyPoints;
+	  }
+
+    void setCustomerNumber(int custNum)
+	 { 
+	 customerNumber = custNum; 
+	 }
+    void setLoyaltyPoints(int loyaltyPts) 
+	{
+	 loyaltyPoints = loyaltyPts; 
+	 }
+};
+class DarazaLoyaltyProgram: public DarazCustomerData{
+	public:
+		using DarazCustomerData::DarazCustomerData;
+		void LoyaltyptsPurchases(){
+			if (loyaltyPoints<=0){
+				cout<<"invalid points..."<<endl;
+				exit(1);
+				
+			}
+			else{
+				cout<<"Purchase successful. Updating your Loyalty points...";
+				loyaltyPoints= loyaltyPoints+10;
+				cout<<"Loyalty points update!"<<endl;
+			}
+		}
+		void Redeemloyaltypts(){
+			if (loyaltyPoints<=0){
+				cout<<"invalid"<<endl;
+				exit(1);
+				
+			}
+			else if (loyaltyPoints>=0 && loyaltyPoints<10){
+				cout<<"insufficient loyalty points"<<endl;
+				exit(1);
+				
+			}
+			else{
+				int discountrate=loyaltyPoints / 10;
+				int discount= 50 * discountrate;
+				cout<<"You got a discount of "<< discount<<"rupees"<<endl;
+			}
+		}
+		void displayloyalPts(){
+			cout<<"Your loyal points are:"<< loyaltyPoints<<endl;
+		}
+};
+int main() {
+    DarazPersonData person;
+    person.setLastName("Murtaza");
+    person.setFirstName("Jafri");
+    person.setAddress("fast nuces");
+    person.setCity("Karachi");
+    person.setState("Sindh");
+    person.setZip("73500");
+    person.setPhone("03431575");
+    cout << "Person Information:" << endl;
+    cout << "Last Name: " << person.getLastName() << endl;
+    cout << "First Name: " << person.getFirstName() << endl;
+    cout << "Address: " << person.getAddress() << endl;
+    cout << "City: " << person.getCity() << endl;
+    cout << "State: " << person.getState() << endl;
+    cout << "ZIP: " << person.getZip() << endl;
+    cout << "Phone: " << person.getPhone() << endl;
+
+    DarazCustomerData customer(1100, 53);
+
+    cout << "\nCustomer Information:" << endl;
+    cout << "Customer Number: " << customer.getCustomerNumber() << endl;
+    cout << "Loyalty Points: " << customer.getLoyaltyPoints() << endl;
+
+    DarazaLoyaltyProgram loyaltyProgram(1200, 150);
+    loyaltyProgram.LoyaltyptsPurchases();
+    loyaltyProgram.displayloyalPts();
+    loyaltyProgram.Redeemloyaltypts();
+
+    return 0;
+}
+
+q4
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Post {
+private:
+    static int postCount;
+    int postId;
+    string content;
+    int likes;
+    int comments;
+
+public:
+    Post(string _content) : content(_content), likes(0), comments(0) {
+        postId = ++postCount;
+    }
+
+    void display() const {
+        cout << "Post ID: " << postId << endl;
+        cout << "Content: " << content << endl;
+        cout << "Likes: " << likes << endl;
+        cout << "Comments: " << comments << endl;
+    }
+
+    void addComment() {
+        ++comments;
+    }
+
+    void likePost() {
+        ++likes;
+    }
+};
+
+int Post::postCount = 0;
+
+class User {
+protected:
+    string username;
+    string email;
+    string password;
+
+public:
+    User(string user, string e, string pass) : username(user), email(e), password(pass) {}
+
+    virtual ~User() {}
+
+    virtual void interactWithPost(Post& post) const = 0;
+};
+
+class RegularUser : public User {
+private:
+    static const int MAX_FEED_SIZE = 10;
+    vector<Post*> feed;
+
+public:
+    RegularUser(string user, string e, string pass) : User(user, e, pass) {}
+
+    void interactWithPost(Post& post) const override {
+        post.likePost();
+        cout << "Regular user liked the post!" << endl;
+    }
+
+    void addToFeed(Post* post) {
+        if (feed.size() < MAX_FEED_SIZE) {
+            feed.push_back(post);
+        } else {
+            cout << "Feed is full, cannot add more posts!" << endl;
+        }
+    }
+
+    void viewFeed() const {
+        cout << "Regular User Feed:" << endl;
+        for (const auto& post : feed) {
+            post->display();
+        }
+    }
+};
+
+class BusinessUser : public User {
+private:
+    static const int MAX_PROMOTED_POSTS = 10;
+    int promotedPostsCount;
+
+public:
+    BusinessUser(string user, string e, string pass) : User(user, e, pass), promotedPostsCount(0) {}
+
+    void interactWithPost(Post& post) const override {
+        post.likePost();
+        cout << "Business user liked the post!" << endl;
+    }
+
+    void promotePost(Post& post) {
+        if (promotedPostsCount < MAX_PROMOTED_POSTS) {
+            post.likePost();
+            post.likePost();
+            post.addComment(); 
+            post.addComment(); 
+            post.addComment(); 
+            ++promotedPostsCount;
+            cout << "Post promoted successfully!" << endl;
+        } else {
+            cout << "Cannot promote more posts, reached the limit!" << endl;
+        }
+    }
+};
+
+int main() {
+    Post post1("This is post 1 content.");
+    Post post2("This is post 2 content.");
+
+    RegularUser regularUser("yessa", "yessa@gmail.com", "Fast1234");
+    BusinessUser businessUser("murtaza", "murtaza@gmail.com", "Fast123");
+
+    regularUser.addToFeed(&post1);
+    regularUser.addToFeed(&post2);
+
+    regularUser.viewFeed();
+
+    businessUser.promotePost(post1);
+
+    return 0;
+}
+
 
