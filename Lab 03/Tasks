@@ -1,1 +1,564 @@
+Q1
+#include <iostream>
 
+using namespace std;
+
+//main class for board marker
+class BoardMarker {
+	//private attributes can ony be accessed by code in the class
+    private:
+        string brand;
+        string shade;
+        bool refillable;
+		bool ink_status;
+    
+    //getter and setter methods set as public so they can access the data in the privat attributes
+    public:
+        void setBrand(string nbrand) {
+            brand = nbrand;
+        }
+        
+		void setShade(string nshade) {
+            shade = nshade;
+        }
+    
+	    void setRefillable(bool refill) {
+            refillable = refill;
+        }
+    
+	    void setinkstatus(bool nstatus) {
+            ink_status = nstatus;
+        }
+
+        string getBrand() {
+            return brand;
+        }
+        
+        string getShade() {
+            return shade;
+        }
+        
+        bool getRefillable() {
+            return refillable;
+        }
+        
+        bool getInkStatus() {
+            return ink_status;
+        }
+    
+};
+
+//method to check if ink has run out
+void write(BoardMarker marker) {
+    if (marker.getInkStatus()) {
+        cout<<marker.getBrand()<<" pen writing with a shade of "<<marker.getShade()<<endl;
+        marker.setinkstatus(false);
+        marker.setRefillable(true);
+        return;
+    }
+    cout<<"depleted ink"<<endl;
+}
+
+//method to refill the ink if possible or required
+void refill(BoardMarker marker) {
+    if (marker.getRefillable()) {
+        cout<<"refilling ink"<<endl;
+        marker.setRefillable(false);
+        marker.setinkstatus(true);
+        return;
+    }
+    cout<<"ink not depleted. can't refill yet"<<endl;
+}
+
+int main()
+{
+	//defining a instance of the class called an object
+    BoardMarker marker;
+    //passing values in the object using the setter functions
+    marker.setBrand("casio");
+    marker.setShade("blue");
+
+    write(marker);
+    write(marker);
+    refill(marker);
+    write(marker);
+
+    return 0;
+}
+Q2
+#include <iostream>
+
+using namespace std;
+
+//defining class for a water bottle
+class WaterBottle {
+    //private attributes
+	private:
+        string company;
+		string color;
+        float water_capacityL;
+        float water_capacityML;
+    
+    //public getter and setter methods
+    public:
+        void setCompany(string acompany) {
+            company = acompany;
+        }
+        
+		void setColor(string acolor) {
+            color = acolor;
+        }
+        
+		void setwatercapacityL(float awater) {
+            water_capacityL = awater/1000;
+        }
+    
+	    void setwatercapacityML(float awater) {
+            water_capacityML = awater;
+        }
+    
+	    string getcompany() {
+            return company;
+        }
+    
+	    string getcolor() {
+            return color;
+        }
+        
+		float getwatercapacityL() {
+            return water_capacityL;
+       }
+    
+	   float getwatercapacityML() {
+            return water_capacityML;
+       }
+};
+
+int main() {
+	
+	//defining a instace of the class called an object
+    WaterBottle bottle;
+    
+	float water_in_ml;
+	//giving values to the setter functions
+    bottle.setColor("blue");
+    bottle.setCompany("nestle");
+
+    cout<<"Enter amount of water consumed";
+    cin>>water_in_ml;
+    bottle.setwatercapacityL(water_in_ml);
+    bottle.setwatercapacityML(water_in_ml);
+    //printing the relevant data
+    cout<<"Drank "<<bottle.getwatercapacityL()<<" liters or "<<bottle.getwatercapacityML()<<" mililiters from a "<<bottle.getcolor()<<" colored bottle of the "<<bottle.getcompany()<<"nestle"<<endl;
+
+    return 0;
+}
+q3
+include <iostream>
+#include <string>
+#include <cstdlib> //header file to use exit function
+#include <unistd.h> //header file to use sleep function to pause the program
+
+using namespace std;
+
+//class to hold the data of the calender
+class Calendar {
+private:
+	//a array for the 12 months of the year
+    string months[12];
+    // a 2D array to hold task for all the days of the year (february"s less days havent been accounted for here)
+    string tasks[12][31];
+    int currentYear;
+
+public:
+	//constructor function to initialize calender objects for different years
+    Calendar(int year) : currentYear(year) {}
+    
+    //function to add tasks in 2-d tasks array and with validation for february included
+    void addTask(int month, int day, const string& task) {
+    	if(month==2) {
+    		if(day>=1 && day<=28) {
+    			tasks[month - 1][day - 1] = task;
+                cout << "Task added successfully on " << day << "/" << month << "/" << currentYear << endl;
+			} else{
+				cout<<"invalid date!"<<endl;
+			}
+		} else if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+            tasks[month - 1][day - 1] = task;
+            cout << "Task added successfully on " << day << "/" << month << "/" << currentYear << endl;
+        } else {
+            cout << "Invalid date!" << endl;
+        }
+        
+    }
+    
+    //function to remove tasks from the 2-d tasks array
+    void removeTask(int month, int day) {
+        if(month==2) {
+    		if(day>=1 && day<=28) {
+    			tasks[month - 1][day - 1] = "";
+                cout << "Task removed successfully from " << day << "/" << month << "/" << currentYear << endl;
+			} else{
+				cout<<"invalid date!"<<endl;
+			}
+		} else if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+            tasks[month - 1][day - 1] = "";
+            cout << "Task removed successfully from " << day << "/" << month << "/" << currentYear << endl;
+        } else {
+            cout << "Invalid date!" << endl;
+        }
+    }
+    
+    //function to display all the tasks throughout the year in a organized format
+    void displayTasks() {
+        cout << "Tasks for the year " << currentYear << ":" << endl;
+        for (int i = 0; i < 12; ++i) {
+            cout << "Month " << i + 1 << ":" << endl;
+            for (int j = 0; j < 31; ++j) {
+                if (!tasks[i][j].empty()) {
+                    cout << j + 1 << "/" << i + 1 << ": " << tasks[i][j] << endl;
+                }
+            }
+        }
+    }
+    
+};
+
+int main() {
+	int year,choice;
+	
+    cout<<"welcome to calendar management system\n"<<endl;
+    cout<<"enter the year for which you want to create a calender:"<<endl;
+    cin>>year;
+    cin.ignore(); //to clear the input buffer
+    //declaring an instance of the calender object
+    Calendar myCalendar(year);
+    cout<<"\ncalender successfully created"<<endl;
+    
+    //loop that will contine to run until user exits the program
+    while(true) {
+	    
+	    //user interface to choose functionality
+        cout << "\n\n\t\t\t\t********choose from the following options:*******\n\n" << endl;
+        cout << "\t\t\t\t|-----------------------------------------------|" << endl;
+        cout << "\t\t\t\t|-----------------------------------------------|" << endl;
+        cout << "\t\t\t\t|    1)add a task in the calender               |" << endl;
+        cout << "\t\t\t\t|    2)remove a task from the calender          |" << endl;
+        cout << "\t\t\t\t|    3)display all the tasks in the calender    |" << endl;
+        cout << "\t\t\t\t|    4)exit                                     |" << endl;
+        cout << "\t\t\t\t|-----------------------------------------------|" << endl;
+        cout << "\t\t\t\t|-----------------------------------------------|" << endl;
+        cout << "enter your choice:" << endl;
+        cin >> choice;
+    
+        int rday,rmonth;
+        string details;
+        int day,month;
+    
+	    switch(choice) {
+    	    case 1:
+    		    cin.ignore();//ignoring newline character in the input buffer
+    		    cout<<"enter the detail of the task you want to add:"<<endl;
+    		    getline(cin,details);
+    		    cout<<"enter the day of the task"<<endl;
+    		    cin>>day;
+    		    cout<<"enter the month of the task"<<endl;
+    		    cin>>month;
+    		    //calling the repective method of the object
+    		    myCalendar.addTask(month, day, details);
+    		    break;
+    	
+    	    case 2:
+    		    cout<<"enter the day of the task you want to remove:"<<endl;
+    		    cin>>rday;
+    		    cout<<"enter the month of the task you want to remove:"<<endl;
+    		    cin>>rmonth;
+    		    myCalendar.removeTask(rmonth, rday);
+    		    break;
+    		
+    	    case 3:
+    		    myCalendar.displayTasks();
+    		    break;
+    		
+    	    case 4:
+    		    cout<<"thank you for using our calender please come again:)"<<endl;
+    		    exit(0);//exit function to leave the program
+    		    break;
+    		
+    	    default:
+    		    cout << "wrong choice, the program will pause for a few seconds then try again" << endl;
+                sleep(3); //function to pause the program for 3 secods
+                system("cls");//function to clear the command console
+                continue; //keyword to continue to next iteration of the loop
+    		
+        }
+    }
+    return 0;
+
+}
+Q4
+#include<iostream>
+
+using namespace std;
+
+class smartphone {
+	//private data attributes of the phone
+	private:
+	    string brand;
+	    string model;
+	    int display_res;
+	    int ram;
+	    int rom;
+	    int storage;
+	    
+	public:
+		//setter methods
+		void set_brand(string abrand) {
+			brand=abrand;
+		}
+		void set_model(string amodel) {
+			model=amodel;
+		}
+		void set_res(int ares) {
+			display_res=ares;
+		}
+		void set_ram(int aram) {
+			ram=aram;
+		}
+		void set_rom(int arom) {
+			rom=arom;
+		}
+		void set_storage(int astorage) {
+			storage=astorage;
+		}
+		
+		//getter methods
+		string get_brand() {
+			return brand;
+		}
+		string get_model() {
+			return model;
+		}
+		int get_res() {
+			return display_res;
+		}
+		int get_ram() {
+			return ram;
+		}
+		int get_rom() {
+			return rom;
+		}
+		int get_storage() {
+			return storage;
+		}
+		
+		//additional functionalty methods
+		void call(string cname) {
+			cout<<"dialing call to "<<cname<<endl;
+		}
+		
+		void message(string crecp) {
+			cout<<"sendig message to "<<crecp<<endl;
+		}
+		
+		void WIFI(string wname) {
+			cout<<"connecting to wifi "<<wname<<endl;
+		}
+		
+		void internet(string search) {
+			cout<<"browsing the internet for the webpage "<<search<<endl;
+		}
+		
+};
+
+int main() {
+	//instance 1 of the class
+	smartphone iphone;
+	iphone.set_brand("iphone");
+	iphone.set_model("13pro");
+	iphone.set_res(1024);
+	iphone.set_ram(8);
+	iphone.set_rom(1000);
+	iphone.set_storage(10000);
+	cout<<"the data for the phone is the following:\n "<<endl;
+	cout<<"the brand of the phone is:"<<endl;
+	cout<<iphone.get_brand()<<endl;
+	cout<<"the model of the phone is:"<<endl;
+	cout<<iphone.get_model()<<endl;
+	cout<<"the screen resolution of the phone is:"<<endl;
+	cout<<iphone.get_res()<<endl;
+	cout<<"the RAM of the phone is:"<<endl;
+	cout<<iphone.get_ram()<<endl;
+	cout<<"the ROM of the phone is:"<<endl;
+	cout<<iphone.get_rom()<<endl;
+	cout<<"the storage of the phone is:"<<endl;
+	cout<<iphone.get_storage()<<endl;
+	iphone.call("murtaza");
+	iphone.message("john");
+	iphone.WIFI("WITRIBE");
+	iphone.internet("youtube");
+	
+	//instance 2 of the class
+	smartphone redmi;
+	iphone.set_brand("redmi");
+	iphone.set_model("13C");
+	iphone.set_res(2048);
+	iphone.set_ram(8);
+	iphone.set_rom(1200);
+	iphone.set_storage(12000);
+	cout<<"the data for the phone is the following:\n "<<endl;
+	cout<<"the brand of the phone is:"<<endl;
+	cout<<iphone.get_brand()<<endl;
+	cout<<"the model of the phone is:"<<endl;
+	cout<<iphone.get_model()<<endl;
+	cout<<"the screen resolution of the phone is:"<<endl;
+	cout<<iphone.get_res()<<endl;
+	cout<<"the RAM of the phone is:"<<endl;
+	cout<<iphone.get_ram()<<endl;
+	cout<<"the ROM of the phone is:"<<endl;
+	cout<<iphone.get_rom()<<endl;
+	cout<<"the storage of the phone is:"<<endl;
+	cout<<iphone.get_storage()<<endl;
+	iphone.call("ahmed");
+	iphone.message("tom");
+	iphone.WIFI("PTCL");
+	iphone.internet("facebook");
+	
+}
+Q5
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+//global variable to store max number of items that can be stored in the store
+const int MAX_ITEMS = 100;
+
+class StationaryShop {
+    private:
+        string items[MAX_ITEMS];
+        double prices[MAX_ITEMS];
+        int itemCount;
+
+    public:
+    	//constructor function 
+        StationaryShop() : itemCount(0) {}
+
+    //a Function to add items and their prices
+    void addItem(const string& item/*a constant pointer to a string*/, double price) {
+        if (itemCount < MAX_ITEMS) {
+            items[itemCount]=item;
+            prices[itemCount]=price;
+            cout<<"Item added successfully: "<<item<<" (Price: $"<<fixed<<setprecision(2)<<price<<")"<<endl;
+            itemCount++;
+        } else {
+            cout<<"Shop inventory is full. Cannot add more items."<<endl;
+        }
+    }
+
+    //Function to display all the items
+    void displayItems() {
+        cout<<"Items available in the shop:"<<endl;
+        for(int i=0;i<itemCount;i++) {
+            cout<<i+1<<". "<<items[i]<<" - $"<<fixed<<setprecision(2)/*function to set the number of decimal places*/<<prices[i]<<endl;
+        }
+    }
+
+    //Function to modify the price of an item
+    void modifyPrice(int index, double newPrice) {
+        if (index >= 1 && index <= itemCount) {
+            prices[index - 1] = newPrice;
+            cout << "Price of " << items[index - 1] << " updated to $" << fixed << setprecision(2) << newPrice << endl;
+        } else {
+            cout << "Invalid item index!" << endl;
+        }
+    }
+
+    //Function to generate a receipt
+    void generateReceipt(const int purchases[], const int quantities[], int purchaseCount) const {
+        cout << "\nReceipt:" << endl;
+        double total = 0;//total amount of the bill
+        for (int i=0; i<purchaseCount; i++) {
+            int index = purchases[i] - 1;//total number of items purchased
+            if (index >= 0 && index < itemCount) {
+                cout << items[index] << " x " << quantities[i] << " - $" << fixed << setprecision(2) << prices[index] * quantities[i] /*calculating price of each items*/<< endl;
+                total += prices[index] * quantities[i];//calculating total amount of the bill
+            }
+        }
+        cout<<"Total: $"<<fixed<<setprecision(2)<<total<<endl;
+    }
+};
+
+int main() {
+	//instance of the class
+    StationaryShop shop;
+    int choice;
+    string item;
+    double price;
+    int index;
+    //array to store all the items purchased
+    int purchases[MAX_ITEMS];
+    //array to store quantity of the items purchased
+    int quantities[MAX_ITEMS];
+    int purchaseCount = 0;
+
+    cout << "Welcome to the Stationary Shop!" << endl;
+
+    while (true) /*infinite loop*/{
+        cout << "\nshop Menu:" << endl;
+        cout << "1. Add item and price" << endl;
+        cout << "2. Display items" << endl;
+        cout << "3. Modify price" << endl;
+        cout << "4. Generate receipt" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            
+			case 1:
+                cout << "Enter item name: ";
+                cin >> item;
+                cout << "Enter item price: ";
+                cin >> price;
+                shop.addItem(item, price);
+                break;
+            
+			case 2:
+                shop.displayItems();
+                break;
+            
+			case 3:
+                cout << "Enter item index to modify price: ";
+                cin >> index;
+                cout << "Enter new price: ";
+                cin >> price;
+                shop.modifyPrice(index, price);
+                break;
+            
+			case 4:
+                cout << "Enter purchased items (item index and quantity):" << endl;
+                cout<<"enter zero at index when done entering items so reciept will be generated"<<endl;
+                while (true) {
+                    cin >> index;
+                    if (index == 0){
+					    break;	
+					} 
+                    cout<<"Quantity: ";
+                    cin>>quantities[purchaseCount];
+                    purchases[purchaseCount++]=index;
+                }
+                shop.generateReceipt(purchases, quantities, purchaseCount);
+                break;
+            
+			case 5:
+                cout << "Exiting program. Goodbye!" << endl;
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
